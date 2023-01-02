@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const config = require('./config/server.config');
 const dbConfig = require('./config/db.config');
 const User = require('./models/user.models');
+const {userTypes} = require('./utils/constant.utils')
 
 const app = express();
 app.use(bodyParser.json());
@@ -34,7 +35,7 @@ async function init() {
             user_id: 'admin',
             password:  bcrypt.hashSync('09012001',10),
             email: 'admin123@gmail.com',
-            userType: 'admin'.toUpperCase(),
+            userType: userTypes.admin,
         });
         console.log(user);
     } catch (err) {
@@ -44,6 +45,7 @@ async function init() {
 
 // Routes
 require('./routes/auth.routes')(app);
+require('./routes/user.routes')(app);
 
 
 app.listen(config.port, () => {

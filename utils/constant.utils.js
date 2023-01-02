@@ -6,7 +6,7 @@ const userTypes = {
 }
 
 const userStatus = {
-    admin: 'approved'.toUpperCase(),
+    admin: 'rejected'.toUpperCase(),
     engineer: 'pending'.toUpperCase(),
     customer: 'approved'.toUpperCase(),
 }

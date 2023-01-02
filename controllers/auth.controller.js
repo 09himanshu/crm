@@ -23,10 +23,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.models');
 const serverConfig = require('../config/server.config');
+const {userStatus, userTypes} = require('../utils/constant.utils')
 
 exports.signup = async (req, res) => {
-    if(req.body.userType.toUpperCase() != 'customer'.toUpperCase()) {
-        req.body.userStatus = 'pending'.toUpperCase();
+    if(req.body.userType.toUpperCase() != userTypes.customer) {
+        req.body.userStatus = userStatus.engineer;
     }
     const useObj = {
         name: req.body.name,
