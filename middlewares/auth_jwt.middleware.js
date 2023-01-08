@@ -41,4 +41,19 @@ const isAdmin = async (req, res, next) => {
     }
 }
 
-module.exports = {verifyJWT, isAdmin}
+const ownerAcc = async (req, res, next) => {
+    try {
+        let data = await User.findOne({user_id: req.params.id});
+        if(!data) return res.status(404).send({status: false, messgae: 'failure', data: `NO user found`});
+        let token_user = await User.findOne({user_id: req.user_id});
+
+        if(token_user.user_id == data.user_id) next();
+        else if(token_user.userType == userTypes.admin) next();
+        else return res.status(403).send({status: false, messgae: 'failure', data: `You are not eligible to access such data !!!`});
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({status: false, messgae: 'failure', data: `Internal server error ${err.messgae}`});
+    }
+}
+
+module.exports = {verifyJWT, isAdmin, ownerAcc}

@@ -11,4 +11,9 @@ const userStatus = {
     customer: 'approved'.toUpperCase(),
 }
 
-module.exports = {userTypes, userStatus}
+const ticketStatus = {
+    open: 'open'.toUpperCase(),
+    closed: 'closed'.toUpperCase(),
+    blocked: 'blocked'.toUpperCase(),
+}
+module.exports = {userTypes, userStatus,ticketStatus}

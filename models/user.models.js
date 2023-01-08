@@ -45,7 +45,15 @@ const User = new mongoose.Schema({
         require: true,
         default: userStatus.customer,
         enum: [userStatus.customer, userStatus.engineer, userStatus.admin]
+    },
+    ticketsCreated: {
+        type: [mongoose.SchemaTypes.ObjectId],
+        ref: 'ticket'
+    },
+    ticketAssigned: {
+        type: [mongoose.SchemaTypes.ObjectId],
+        ref: 'ticket'
     }
-});
+}, {versionKey: false});
 
 module.exports = mongoose.model('user',User );
