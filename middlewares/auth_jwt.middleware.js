@@ -73,17 +73,17 @@ const check_correct_user = async (req, res, next) => {
     let _id = req.params._id;
     try {
         let user = await User.findOne({user_id: req.user_id});
-        let check_engineer = await User.findById(req.body.assignee);
+        let check_engineer = await User.findOne({user_id: req.body.assignee});
         let ticket = await Ticket.findOne({_id});
-        // console.log(user.user_id);
+    
         if(user.userType == userTypes.customer) {
             if(user.user_id != ticket.reporter) return res.status(403).send({status: false, messgae: 'failure', data: `Invalid user line 80`})
         } else if(user.userType == userTypes.engineer) {
             if(user.user_id != ticket.assignee) return res.status(403).send({status: false, messgae: 'failure', data: `Invalid user line 82`})
-        } else if(user.userType != userTypes.admin) return res.status(403).send({status: false, messgae: 'failure', data: `Invalid user line 83`})
+        }
 
-        if(req.body.assignee != undefined && user.userType != userTypes.admin) return res.status(403).send({status: false, messgae: 'failure', data: `Invalid user line 85`});
-        else if(req.body.assignee != undefined && check_engineer == null) return res.status(403).send({status: false, messgae: 'failure', data: `Invalid engineer id`});
+        if(req.body.assignee != undefined && user.userType == userTypes.engineer) return res.status(403).send({status: false, messgae: 'failure', data: `Invalid user line 85`});
+        else if(req.body.assignee != undefined && !check_engineer) return res.status(403).send({status: false, messgae: 'failure', data: `Invalid engineer id`});
 
         next();
     } catch (err) {
