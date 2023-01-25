@@ -7,6 +7,8 @@
  *           -- Middleware 
  * 
  * 3. After the ticket is created, ensyre the users documents are also updated
+ * 
+ * 4. Send the emali after the ticket is created to all the tickets holders
  */
 
 const User = require('../models/user.models');
