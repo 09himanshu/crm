@@ -14,6 +14,7 @@
 const User = require('../models/user.models');
 const Ticket = require('../models/ticket.model');
 const {userTypes, userStatus} = require('../utils/constant.utils');
+const sendEmail = require('../utils/notification_client')
 
 
 exports.createTicket = async(req, res) => {
@@ -26,6 +27,8 @@ exports.createTicket = async(req, res) => {
         status: req.body.status
     }
 
+    const complainer = await User.findOne({user_id: req.user_id});
+
     try {
         // Find the Engineer avaliable and attach to the ticket object
         const engineer = await User.find({userType: userTypes.engineer, userStatus: userStatus.customer});
@@ -33,14 +36,12 @@ exports.createTicket = async(req, res) => {
         if(engineer.length != 0) {
             let min = Infinity;
             engineer.forEach(ele => {
-                // console.log(ele.ticketAssigned.length);
                 if(ele.ticketAssigned.length < min) {
-                    // console.log(min);
                     min = ele.ticketAssigned.length;
                     obj.user_id = ele.user_id;
+                    obj.mail = ele.email;
                 }
             })
-            // console.log(obj);
             ticketObj.assignee = obj.user_id
         }
         // Insert the ticket object in the users documents
@@ -51,6 +52,10 @@ exports.createTicket = async(req, res) => {
                 await User.updateOne({user_id: obj.user_id}, {$push: {ticketAssigned: ticket._id} });
             }
         }
+
+        //  Now we should send the notification request to notificationService
+        sendEmail(`Ticket created with id: ${ticket._id}`, `Complaint ticket was created`, `${complainer.email},${obj.mail}`, 'CRM APP');
+
         res.status(201).send({status: true, message: 'success', data: ticketObj})
     } catch (err) {
         console.log(err);
