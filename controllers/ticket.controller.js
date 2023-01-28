@@ -54,7 +54,7 @@ exports.createTicket = async(req, res) => {
         }
 
         //  Now we should send the notification request to notificationService
-        sendEmail(`Ticket created with id: ${ticket._id}`, `Complaint ticket was created`, `${complainer.email},${obj.mail}`, 'CRM APP');
+        sendEmail(`Ticket created with id: ${ticket._id}`, ticket.description, `${complainer.email},${obj.mail}`, 'CRM APP');
 
         res.status(201).send({status: true, message: 'success', data: ticketObj})
     } catch (err) {
@@ -88,6 +88,8 @@ exports.update_Tickets = async (req, res) => {
     let _id = req.params._id;
     try {
         const ticket = await Ticket.findOne({_id});
+        let owner = await User.findOne({user_id: req.user_id});
+        let assignee = await User.findOne({user_id: ticket.assignee});
 
         ticket.title = req.body.title != undefined ? req.body.title : ticket.title;
         ticket.ticketPriority = req.body.ticketPriority != undefined ? req.body.ticketPriority : ticket.ticketPriority;
@@ -96,6 +98,10 @@ exports.update_Tickets = async (req, res) => {
         ticket.description = req.body.description != undefined ? req.body.description : ticket.description;
 
         await ticket.save();
+
+        //  Now we should send the notification request to notificationService
+        sendEmail(`Ticket created with id: ${ticket._id}`, ticket.description, `${owner.email},${assignee.email}`, 'CRM APP');
+
         res.status(200).send({status: true, message: 'success', data: 'Ticket updated'});
     } catch (err) {
         console.log(err);
